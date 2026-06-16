@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NducShop - Đăng nhập / Đăng ký</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+        body { background: #0a0a0f; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { max-width: 420px; width: 100%; background: #12121a; padding: 2rem 1.5rem 1.5rem; border-radius: 20px; border: 1px solid #2a2a3a; }
+        .brand { text-align: center; margin-bottom: 2rem; }
+        .brand h1 { font-size: 2rem; font-weight: 700; color: #fff; }
+        .brand .sub { color: #8888cc; font-size: 0.8rem; letter-spacing: 2px; }
+        .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a3a; }
+        .tabs button { flex: 1; padding: 0.7rem; background: #1a1a2a; border: none; color: #8888bb; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .tabs button.active { background: #2a2a5a; color: #fff; }
+        .form { display: none; flex-direction: column; gap: 1rem; }
+        .form.active { display: flex; }
+        .form input { background: #1a1a2a; border: 1px solid #2e2e4a; border-radius: 10px; padding: 0.8rem 1rem; color: #fff; font-size: 0.95rem; outline: none; }
+        .form input:focus { border-color: #5555aa; }
+        .form input::placeholder { color: #555577; }
+        .form button { background: #2a6a3a; border: none; border-radius: 10px; padding: 0.8rem; font-size: 1rem; font-weight: 600; color: #fff; cursor: pointer; transition: 0.2s; }
+        .form button:hover { background: #3a8a4a; }
+        .form button.danger { background: #6a2a2a; }
+        .form button.danger:hover { background: #8a3a3a; }
+        .message { text-align: center; font-size: 0.85rem; color: #ff6b6b; min-height: 1.5rem; margin-top: 0.5rem; }
+        .message.success { color: #6bff6b; }
+        .shop-area { display: none; text-align: center; padding: 1rem 0; }
+        .shop-area.active { display: block; }
+        .shop-area h2 { color: #fff; margin-bottom: 0.5rem; }
+        .shop-area p { color: #8888bb; font-size: 0.9rem; }
+        .shop-area .logout { background: #6a2a2a; border: none; border-radius: 10px; padding: 0.6rem 2rem; color: #fff; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+        .shop-area .logout:hover { background: #8a3a3a; }
+        .hidden { display: none; }
+
+        /* ---- Phần footer giống IMG_0340 ---- */
+        .footer-links { margin-top: 1.8rem; padding-top: 1rem; border-top: 1px solid #1e1e2e; text-align: center; }
+        .footer-links .row { display: flex; justify-content: center; gap: 1.2rem; font-size: 0.7rem; color: #666688; flex-wrap: wrap; }
+        .footer-links .row span { cursor: default; }
+        .footer-links .row .highlight { color: #8888cc; }
+        .footer-links .zalo-line { display: flex; justify-content: center; align-items: center; gap: 0.8rem; margin-top: 0.6rem; padding: 0.4rem 0; background: #161625; border-radius: 30px; border: 1px solid #2a2a4a; }
+        .footer-links .zalo-line span { color: #aaaadd; font-size: 0.8rem; }
+        .footer-links .zalo-line .zalo-badge { background: #0066ff; color: #fff; padding: 0.05rem 1rem; border-radius: 30px; font-weight: 600; font-size: 0.75rem; }
+        .footer-links .domain-line { margin-top: 0.5rem; font-size: 0.7rem; color: #444466; letter-spacing: 1px; }
+        .footer-links .domain-line .aa { color: #7777aa; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <!-- Brand -->
+    <div class="brand">
+        <h1>Nduc<span style="color:#8888cc;">Shop</span></h1>
+        <div class="sub">CUTTAY SOLUTIONS</div>
+    </div>
+
+    <!-- Khu vực đăng nhập / đăng ký -->
+    <div id="authArea">
+        <div class="tabs">
+            <button class="active" data-tab="login">Đăng nhập</button>
+            <button data-tab="register">Đăng ký</button>
+        </div>
+
+        <!-- Form Đăng nhập -->
+        <div class="form active" id="loginForm">
+            <input type="text" id="loginUser" placeholder="Tên đăng nhập" autocomplete="username">
+            <input type="password" id="loginPass" placeholder="Mật khẩu" autocomplete="current-password">
+            <button id="loginBtn">Đăng nhập</button>
+            <div class="message" id="loginMsg"></div>
+        </div>
+
+        <!-- Form Đăng ký -->
+        <div class="form" id="registerForm">
+            <input type="text" id="regUser" placeholder="Tên đăng nhập mới" autocomplete="off">
+            <input type="password" id="regPass" placeholder="Mật khẩu" autocomplete="new-password">
+            <input type="password" id="regPass2" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
+            <button id="registerBtn">Đăng ký</button>
+            <div class="message" id="regMsg"></div>
+        </div>
+    </div>
+
+    <!-- Khu vực Shop (sau login) -->
+    <div class="shop-area" id="shopArea">
+        <h2>🛒 Chào mừng đến Shop</h2>
+        <p>Bạn đã đăng nhập thành công.</p>
+        <p style="font-size:0.8rem; color:#555577; margin-top:0.3rem;">(Giao diện shop sẽ hiển thị tại đây)</p>
+        <button class="logout" id="logoutBtn">Đăng xuất</button>
+    </div>
+
+    <!-- ---- Footer giống IMG_0340: dòng Discord/Fanpage, Crypto, Zalo, AA shyun.shop ---- -->
+    <div class="footer-links">
+        <div class="row">
+            <span>Discord</span>
+            <span>Fanpage</span>
+            <span class="highlight">Crypto/Debit</span>
+        </div>
+        <div class="zalo-line">
+            <span>📱 Zalo</span>
+            <span class="zalo-badge">NducShop</span>
+        </div>
+        <div class="domain-line">
+            <span class="aa">AA</span>  NducShop
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---- Lưu trữ tài khoản trên localStorage ----
+    const DB_KEY = 'nducshop_accounts';
+
+    function getAccounts() {
+        try {
+            return JSON.parse(localStorage.getItem(DB_KEY)) || {};
+        } catch { return {}; }
+    }
+
+    function saveAccounts(accounts) {
+        localStorage.setItem(DB_KEY, JSON.stringify(accounts));
+    }
+
+    // ---- State ----
+    let currentUser = null;
+
+    // ---- DOM refs ----
+    const authArea = document.getElementById('authArea');
+    const shopArea = document.getElementById('shopArea');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginMsg = document.getElementById('loginMsg');
+    const regMsg = document.getElementById('regMsg');
+
+    // ---- Tab switching ----
+    document.querySelectorAll('.tabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const tab = this.dataset.tab;
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            } else {
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+            }
+            loginMsg.textContent = '';
+            loginMsg.className = 'message';
+            regMsg.textContent = '';
+            regMsg.className = 'message';
+        });
+    });
+
+    // ---- Đăng ký ----
+    document.getElementById('registerBtn').addEventListener('click', function() {
+        const user = document.getElementById('regUser').value.trim();
+        const pass = document.getElementById('regPass').value;
+        const pass2 = document.getElementById('regPass2').value;
+
+        if (!user || !pass || !pass2) {
+            regMsg.textContent = '❌ Vui lòng điền đầy đủ thông tin.';
+            regMsg.className = 'message';
+            return;
+        }
+        if (user.length < 3) {
+            regMsg.textContent = '❌ Tên đăng nhập ít nhất 3 ký tự.';
+            regMsg.className = 'message';
+            return;
+        }
+        if (pass.length < 4) {
+            regMsg.textContent = '❌ Mật khẩu ít nhất 4 ký tự.';
+            regMsg.className = 'message';
+            return;
+        }
+        if (pass !== pass2) {
+            regMsg.textContent = '❌ Mật khẩu xác nhận không khớp.';
+            regMsg.className = 'message';
+            return;
+        }
+
+        const accounts = getAccounts();
+        if (accounts[user]) {
+            regMsg.textContent = '❌ Tên đăng nhập đã tồn tại.';
+            regMsg.className = 'message';
+            return;
+        }
+
+        accounts[user] = pass;
+        saveAccounts(accounts);
+        regMsg.textContent = '✅ Đăng ký thành công! Hãy đăng nhập.';
+        regMsg.className = 'message success';
+        document.getElementById('regUser').value = '';
+        document.getElementById('regPass').value = '';
+        document.getElementById('regPass2').value = '';
+        document.querySelector('[data-tab="login"]').click();
+    });
+
+    // ---- Đăng nhập ----
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        const user = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value;
+
+        if (!user || !pass) {
+            loginMsg.textContent = '❌ Nhập tên đăng nhập và mật khẩu.';
+            loginMsg.className = 'message';
+            return;
+        }
+
+        const accounts = getAccounts();
+        if (!accounts[user]) {
+            loginMsg.textContent = '❌ Tài khoản không tồn tại.';
+            loginMsg.className = 'message';
+            return;
+        }
+        if (accounts[user] !== pass) {
+            loginMsg.textContent = '❌ Sai mật khẩu.';
+            loginMsg.className = 'message';
+            return;
+        }
+
+        currentUser = user;
+        authArea.style.display = 'none';
+        shopArea.classList.add('active');
+        loginMsg.textContent = '';
+        loginMsg.className = 'message';
+        document.getElementById('loginUser').value = '';
+        document.getElementById('loginPass').value = '';
+    });
+
+    // ---- Đăng xuất ----
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        currentUser = null;
+        authArea.style.display = 'block';
+        shopArea.classList.remove('active');
+        document.querySelector('[data-tab="login"]').click();
+    });
+
+    // ---- Enter key ----
+    document.getElementById('loginPass').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+    document.getElementById('regPass2').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('registerBtn').click();
+    });
+</script>
+</body>
+</html>
