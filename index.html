@@ -396,7 +396,6 @@
 
     // ====== LỊCH SỬ NẠP TIỀN ======
     const historyModal = document.getElementById('historyModal');
-    // Tạo nút lịch sử trong menu sidebar
     const historyBtn = document.createElement('button');
     historyBtn.className = 'deposit-btn';
     historyBtn.textContent = '📜 Lịch sử nạp';
@@ -417,7 +416,6 @@
         renderUserHistory(currentUser);
         historyModal.classList.add('active');
     };
-    // Chèn vào sau nút đăng xuất
     const logoutBtn = document.getElementById('logoutBtnSidebar');
     logoutBtn.parentNode.insertBefore(historyBtn, logoutBtn.nextSibling);
 
