@@ -339,6 +339,7 @@
         closeMenu();
     });
 
+    // ====== NẠP TIỀN ======
     const depositModal = document.getElementById('depositModal');
     document.getElementById('sidebarDepositBtn').addEventListener('click', function() {
         if (!currentUser) { alert('Vui lòng đăng nhập để nạp tiền.'); return; }
@@ -393,13 +394,33 @@
         reader.readAsDataURL(proofFile);
     });
 
-    // Lịch sử nạp tiền
+    // ====== LỊCH SỬ NẠP TIỀN ======
     const historyModal = document.getElementById('historyModal');
-    document.getElementById('sidebarHistoryBtn').addEventListener('click', function() {
+    // Tạo nút lịch sử trong menu sidebar
+    const historyBtn = document.createElement('button');
+    historyBtn.className = 'deposit-btn';
+    historyBtn.textContent = '📜 Lịch sử nạp';
+    historyBtn.style.marginTop = '8px';
+    historyBtn.style.background = '#3498db';
+    historyBtn.style.color = '#fff';
+    historyBtn.style.border = 'none';
+    historyBtn.style.borderRadius = '6px';
+    historyBtn.style.padding = '12px';
+    historyBtn.style.width = '100%';
+    historyBtn.style.fontWeight = 'bold';
+    historyBtn.style.fontSize = '1em';
+    historyBtn.style.cursor = 'pointer';
+    historyBtn.onmouseover = function() { this.style.background = '#2980b9'; };
+    historyBtn.onmouseout = function() { this.style.background = '#3498db'; };
+    historyBtn.onclick = function() {
         if (!currentUser) { alert('Vui lòng đăng nhập.'); return; }
         renderUserHistory(currentUser);
         historyModal.classList.add('active');
-    });
+    };
+    // Chèn vào sau nút đăng xuất
+    const logoutBtn = document.getElementById('logoutBtnSidebar');
+    logoutBtn.parentNode.insertBefore(historyBtn, logoutBtn.nextSibling);
+
     document.getElementById('closeHistoryModal').addEventListener('click', function() { historyModal.classList.remove('active'); });
     document.getElementById('closeHistoryFromInside').addEventListener('click', function() { historyModal.classList.remove('active'); });
     historyModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
@@ -417,12 +438,16 @@
             div.className = 'history-item';
             const statusText = req.status === 'pending' ? '⏳ Chờ duyệt' : '✅ Đã duyệt';
             const statusClass = req.status === 'pending' ? 'h-status-pending' : 'h-status-approved';
-            div.innerHTML = `<span><span class="h-amount">+${req.amount.toLocaleString()} VND</span></span><span><span class="${statusClass}">${statusText}</span></span><span class="h-time">${req.timestamp || ''}</span>`;
+            div.innerHTML = `
+                <span><span class="h-amount">+${req.amount.toLocaleString()} VND</span></span>
+                <span><span class="${statusClass}">${statusText}</span></span>
+                <span class="h-time">${req.timestamp || ''}</span>
+            `;
             container.appendChild(div);
         });
     }
 
-    // ADMIN
+    // ====== ADMIN ======
     const adminModal = document.getElementById('adminModal');
     document.getElementById('sidebarAdminBtn').addEventListener('click', function() {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
@@ -555,7 +580,7 @@
         document.getElementById('userBalanceDisplay').innerText = userBalance.toLocaleString();
     }
 
-    // MENU
+    // ====== MENU ======
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('menuSidebar');
     const overlay = document.getElementById('overlay');
@@ -568,7 +593,7 @@
     });
     overlay.addEventListener('click', closeMenu);
 
-    // ĐĂNG KÝ / ĐĂNG NHẬP
+    // ====== ĐĂNG KÝ / ĐĂNG NHẬP ======
     const registerModal = document.getElementById('registerModal');
     const loginModal = document.getElementById('loginModal');
     document.getElementById('openRegisterBtn').addEventListener('click', function() {
