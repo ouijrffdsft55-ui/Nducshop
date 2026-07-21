@@ -390,6 +390,22 @@
             margin-top: 10px;
         }
         .menu-sidebar .logout-btn-sidebar:hover { background: #c0392b; }
+        
+        .sidebar-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #555;
+            font-size: 0.8em;
+            color: #aaa;
+            line-height: 1.8;
+        }
+        .sidebar-footer .contact {
+            color: #f1c40f;
+        }
+        .sidebar-footer .slogan {
+            color: #2ecc71;
+            font-style: italic;
+        }
 
         .overlay {
             position: fixed;
@@ -540,6 +556,10 @@
     <button class="checkout-btn" id="sidebarCheckout">Thanh toán</button>
     <button class="admin-btn" id="sidebarAdminBtn" style="display:none;">👑 Duyệt tiền</button>
     <button class="logout-btn-sidebar" id="logoutBtnSidebar" style="display:none;">Đăng xuất</button>
+    <div class="sidebar-footer">
+        <div class="contact">📞 Nếu gặp lỗi gì vui lòng liên hệ Zalo: 0325976017</div>
+        <div class="slogan">✨ Uy Tín, Mang lại niềm vui cho tất cả mọi người</div>
+    </div>
 </div>
 
 <div class="container">
@@ -724,7 +744,6 @@
             container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có lịch sử nạp tiền</p>';
             return;
         }
-        // Hiển thị tất cả, xếp mới nhất lên đầu
         const sorted = [...depositRequests].reverse();
         sorted.forEach(req => {
             const div = document.createElement('div');
@@ -745,10 +764,18 @@
         });
     }
 
+    // FIX: Xem ảnh biên lai - đảm bảo hiển thị đúng base64
     function viewProof(id) {
         const req = depositRequests.find(r => r.id === id);
-        if (!req || !req.proof) { alert('Không có ảnh biên lai.'); return; }
-        document.getElementById('proofImageDisplay').src = req.proof;
+        if (!req) { alert('Không tìm thấy yêu cầu.'); return; }
+        if (!req.proof) { alert('Không có ảnh biên lai cho yêu cầu này.'); return; }
+        // Kiểm tra nếu proof đã có data:image hoặc chưa
+        let imgSrc = req.proof;
+        if (!imgSrc.startsWith('data:image')) {
+            // Nếu chưa có prefix, thêm vào
+            imgSrc = 'data:image/png;base64,' + imgSrc;
+        }
+        document.getElementById('proofImageDisplay').src = imgSrc;
         document.getElementById('proofModal').classList.add('active');
     }
     window.viewProof = viewProof;
