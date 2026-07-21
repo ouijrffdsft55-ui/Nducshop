@@ -8,56 +8,399 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background: #f4f4f4; padding: 20px; padding-top: 80px; }
         .container { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
-        .menu-toggle { position: fixed; top: 20px; left: 20px; z-index: 1000; background: #2c3e50; border: none; padding: 12px 14px; border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .menu-toggle span { display: block; width: 28px; height: 4px; background: white; border-radius: 2px; }
-        .auth-buttons { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; }
-        .auth-buttons button { padding: 10px 20px; border: none; border-radius: 6px; background: #1abc9c; color: white; font-weight: bold; cursor: pointer; font-size: 0.95em; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: #2c3e50;
+            border: none;
+            padding: 12px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 4px;
+            background: white;
+            border-radius: 2px;
+        }
+        
+        .auth-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+        .auth-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #1abc9c;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.95em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
         .auth-buttons button:hover { background: #16a085; }
         .auth-buttons .login-btn { background: #3498db; }
         .auth-buttons .login-btn:hover { background: #2980b9; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
         .modal.active { display: flex; }
-        .modal-content { background: #2c3e50; color: white; padding: 30px 35px; border-radius: 12px; width: 420px; max-width: 95%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-content h2 { margin-bottom: 20px; border-bottom: 2px solid #1abc9c; padding-bottom: 10px; text-align: center; }
-        .modal-content .close-modal { position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer; color: #aaa; background: none; border: none; }
+        .modal-content {
+            background: #2c3e50;
+            color: white;
+            padding: 30px 35px;
+            border-radius: 12px;
+            width: 460px;
+            max-width: 95%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            position: relative;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1abc9c;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        .modal-content .close-modal {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #aaa;
+            background: none;
+            border: none;
+        }
         .modal-content .close-modal:hover { color: #fff; }
-        .input-group { position: relative; margin: 12px 0; }
-        .input-group input { width: 100%; padding: 12px 45px 12px 14px; border: none; border-radius: 6px; font-size: 1em; background: #ecf0f1; color: #2c3e50; outline: none; }
-        .input-group input:focus { background: #fff; box-shadow: 0 0 0 2px #1abc9c; }
-        .input-group .toggle-pwd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.4em; color: #555; padding: 0 4px; line-height: 1; }
+        
+        .input-group {
+            position: relative;
+            margin: 12px 0;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 45px 12px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #ecf0f1;
+            color: #2c3e50;
+            outline: none;
+        }
+        .input-group input:focus {
+            background: #fff;
+            box-shadow: 0 0 0 2px #1abc9c;
+        }
+        .input-group .toggle-pwd {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4em;
+            color: #555;
+            padding: 0 4px;
+            line-height: 1;
+        }
         .input-group .toggle-pwd:hover { color: #000; }
-        .modal-content button[type="submit"], .modal-content .action-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 6px; background: #1abc9c; color: white; font-weight: bold; font-size: 1em; cursor: pointer; }
+        
+        .modal-content button[type="submit"], .modal-content .action-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #1abc9c;
+            color: white;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+        }
         .modal-content button[type="submit"]:hover, .modal-content .action-btn:hover { background: #16a085; }
-        .modal-content .switch-form { text-align: center; margin-top: 15px; font-size: 0.9em; color: #bbb; }
-        .modal-content .switch-form span { color: #1abc9c; cursor: pointer; text-decoration: underline; }
+        .modal-content .action-btn.danger { background: #e74c3c; }
+        .modal-content .action-btn.danger:hover { background: #c0392b; }
+        .modal-content .action-btn.warning { background: #f39c12; }
+        .modal-content .action-btn.warning:hover { background: #d68910; }
+        .modal-content .switch-form {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #bbb;
+        }
+        .modal-content .switch-form span {
+            color: #1abc9c;
+            cursor: pointer;
+            text-decoration: underline;
+        }
         .modal-content .switch-form span:hover { color: #16a085; }
-        .modal-content .qr-image { width: 100%; max-width: 280px; display: block; margin: 10px auto; border-radius: 8px; border: 2px solid #1abc9c; background: #fff; padding: 5px; }
-        .modal-content .deposit-info { background: #34495e; padding: 12px; border-radius: 6px; margin: 10px 0; text-align: center; font-size: 0.95em; }
+        .modal-content .qr-image {
+            width: 100%;
+            max-width: 280px;
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+            border: 2px solid #1abc9c;
+            background: #fff;
+            padding: 5px;
+        }
+        .modal-content .notice-box {
+            background: #f39c12;
+            color: #2c3e50;
+            padding: 12px 14px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            text-align: center;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+        .modal-content .deposit-info {
+            background: #34495e;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
         .modal-content .deposit-info strong { color: #f1c40f; }
-        .modal-content .file-input-label { display: block; background: #3498db; padding: 12px; border-radius: 6px; text-align: center; cursor: pointer; margin: 10px 0; font-weight: bold; color: white; transition: 0.2s; }
+        .modal-content .file-input-label {
+            display: block;
+            background: #3498db;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+        }
         .modal-content .file-input-label:hover { background: #2980b9; }
         .modal-content input[type="file"] { display: none; }
-        .modal-content .upload-preview { max-width: 100%; max-height: 150px; margin: 10px auto; display: none; border-radius: 6px; border: 1px solid #555; }
-        .menu-sidebar { position: fixed; top: 0; left: -350px; width: 330px; height: 100%; background: #2c3e50; color: white; padding: 80px 20px 20px; transition: 0.3s; z-index: 999; box-shadow: 2px 0 15px rgba(0,0,0,0.5); overflow-y: auto; }
+        .modal-content .upload-preview {
+            max-width: 100%;
+            max-height: 150px;
+            margin: 10px auto;
+            display: none;
+            border-radius: 6px;
+            border: 1px solid #555;
+        }
+        .modal-content .deposit-list {
+            max-height: 280px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .modal-content .deposit-item {
+            background: #34495e;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .modal-content .deposit-item .info {
+            flex: 1;
+            min-width: 120px;
+        }
+        .modal-content .deposit-item .time {
+            font-size: 0.75em;
+            color: #aaa;
+        }
+        .modal-content .deposit-item .status-pending { color: #f1c40f; font-weight: bold; }
+        .modal-content .deposit-item .status-approved { color: #2ecc71; font-weight: bold; }
+        .modal-content .deposit-item .approve-btn {
+            background: #2ecc71;
+            color: #fff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        .modal-content .deposit-item .approve-btn:hover { background: #27ae60; }
+        .modal-content .deposit-item .proof-link {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        .modal-content .deposit-item .proof-link:hover { color: #5dade2; }
+        .modal-content .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .modal-content .admin-actions input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            outline: none;
+            min-width: 80px;
+        }
+        .modal-content .admin-actions input:focus {
+            background: #fff;
+            box-shadow: 0 0 0 2px #1abc9c;
+        }
+        .modal-content .admin-actions .action-btn {
+            flex: 0 0 auto;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .modal-content .admin-actions .action-btn.approve { background: #2ecc71; }
+        .modal-content .admin-actions .action-btn.approve:hover { background: #27ae60; }
+        .modal-content .admin-actions .action-btn.delete { background: #e74c3c; }
+        .modal-content .admin-actions .action-btn.delete:hover { background: #c0392b; }
+
+        .menu-sidebar {
+            position: fixed;
+            top: 0;
+            left: -350px;
+            width: 330px;
+            height: 100%;
+            background: #2c3e50;
+            color: white;
+            padding: 80px 20px 20px;
+            transition: 0.3s;
+            z-index: 999;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
         .menu-sidebar.open { left: 0; }
-        .menu-sidebar h2 { border-bottom: 2px solid #1abc9c; padding-bottom: 10px; margin-bottom: 15px; font-size: 1.2em; }
-        .menu-sidebar .user-status { background: #34495e; padding: 12px; border-radius: 6px; text-align: center; margin-bottom: 15px; font-size: 0.95em; }
-        .menu-sidebar .balance-display { background: #1a252f; padding: 10px; border-radius: 6px; text-align: center; margin: 10px 0; font-size: 1.1em; }
+        .menu-sidebar h2 {
+            border-bottom: 2px solid #1abc9c;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        .menu-sidebar .user-status {
+            background: #34495e;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .menu-sidebar .balance-display {
+            background: #1a252f;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
         .menu-sidebar .balance-display strong { color: #f1c40f; }
-        .menu-sidebar .cart-list { list-style: none; padding: 0; margin: 10px 0; max-height: 200px; overflow-y: auto; }
-        .menu-sidebar .cart-list li { padding: 8px 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; font-size: 0.9em; }
-        .menu-sidebar .cart-list li button { background: #e74c3c; border: none; color: #fff; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
-        .menu-sidebar .cart-total { font-size: 1.2em; font-weight: bold; text-align: right; padding: 12px 0; border-top: 2px solid #1abc9c; margin-top: 10px; }
-        .menu-sidebar .checkout-btn, .menu-sidebar .deposit-btn { width: 100%; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 1em; cursor: pointer; margin-top: 8px; }
+        .menu-sidebar .cart-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .menu-sidebar .cart-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+        .menu-sidebar .cart-list li button {
+            background: #e74c3c;
+            border: none;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        .menu-sidebar .cart-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: right;
+            padding: 12px 0;
+            border-top: 2px solid #1abc9c;
+            margin-top: 10px;
+        }
+        .menu-sidebar .checkout-btn, .menu-sidebar .deposit-btn, .menu-sidebar .admin-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 8px;
+        }
         .menu-sidebar .checkout-btn { background: #3498db; }
         .menu-sidebar .checkout-btn:hover { background: #2980b9; }
         .menu-sidebar .deposit-btn { background: #f1c40f; color: #2c3e50; }
         .menu-sidebar .deposit-btn:hover { background: #f39c12; }
-        .menu-sidebar .logout-btn-sidebar { width: 100%; padding: 10px; background: #e74c3c; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .menu-sidebar .admin-btn { background: #9b59b6; }
+        .menu-sidebar .admin-btn:hover { background: #8e44ad; }
+        .menu-sidebar .logout-btn-sidebar {
+            width: 100%;
+            padding: 10px;
+            background: #e74c3c;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
         .menu-sidebar .logout-btn-sidebar:hover { background: #c0392b; }
-        .menu-sidebar .admin-section { margin-top: 20px; border-top: 1px solid #555; padding-top: 15px; color: #aaa; font-size: 0.85em; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 998;
+            display: none;
+        }
         .overlay.active { display: block; }
+
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .product { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; background: #fafafa; }
         .product img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
@@ -70,6 +413,11 @@
         h1 { text-align: center; margin-bottom: 20px; }
         #fileLabel { cursor: pointer; }
         #fileLabel:hover { background: #2980b9; }
+        .proof-img-modal {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -111,14 +459,18 @@
     </div>
 </div>
 
-<!-- MODAL NẠP TIỀN - QR TỪ API (TẠM THỜI) -->
+<!-- MODAL NẠP TIỀN -->
 <div class="modal" id="depositModal">
     <div class="modal-content">
         <button class="close-modal" id="closeDepositModal">&times;</button>
         <h2>💵 Nạp tiền</h2>
         <p style="text-align:center; margin-bottom:10px;">Quét QR bên dưới để chuyển tiền</p>
-        <!-- QR từ API - thay bằng ảnh thật khi có -->
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=0325976017" alt="QR Code" class="qr-image" id="qrImageDisplay">
+        <div class="notice-box">
+            ⚠️ Thông báo: Nếu QR nạp tiền lỗi, hãy nhập số tài khoản<br>
+            <strong>0325976017</strong> - <strong>NGUYEN DUC ANH</strong> - <strong>MB Bank</strong><br>
+            và tải ảnh biên lai lên, chờ Admin duyệt
+        </div>
         <div class="deposit-info">
             <strong>NGUYEN DUC ANH</strong><br>
             Ngân hàng: <strong>MB Bank</strong><br>
@@ -138,6 +490,44 @@
     </div>
 </div>
 
+<!-- MODAL ADMIN DUYỆT TIỀN -->
+<div class="modal" id="adminModal">
+    <div class="modal-content">
+        <button class="close-modal" id="closeAdminModal">&times;</button>
+        <h2>👑 Quản lý nạp tiền</h2>
+        <div id="adminDepositList" class="deposit-list">
+            <p style="color:#888; text-align:center; padding:20px 0;">Chưa có yêu cầu nạp tiền</p>
+        </div>
+        <div style="margin-top:15px; border-top:1px solid #555; padding-top:15px;">
+            <p style="font-size:0.9em; color:#aaa; margin-bottom:8px;">⚡ Nạp tiền cho người dùng (Admin):</p>
+            <div class="admin-actions">
+                <input type="text" id="adminTopupUser" placeholder="Tên người dùng">
+                <input type="number" id="adminTopupAmount" placeholder="Số tiền" style="min-width:100px;">
+                <button class="action-btn approve" id="adminTopupBtn">💰 Nạp</button>
+            </div>
+        </div>
+        <div style="margin-top:12px; border-top:1px solid #555; padding-top:12px;">
+            <p style="font-size:0.9em; color:#aaa; margin-bottom:8px;">📋 Duyệt yêu cầu theo tên:</p>
+            <div class="admin-actions">
+                <input type="text" id="adminApproveUser" placeholder="Tên người dùng">
+                <button class="action-btn approve" id="adminApproveBtn">✅ Duyệt</button>
+                <button class="action-btn delete" id="adminDeleteHistoryBtn">🗑️ Xoá lịch sử</button>
+            </div>
+        </div>
+        <div class="switch-form" style="margin-top:15px;"><span id="closeAdminFromInside">Đóng</span></div>
+    </div>
+</div>
+
+<!-- MODAL XEM ẢNH BIÊN LAI -->
+<div class="modal" id="proofModal">
+    <div class="modal-content" style="max-width:500px;">
+        <button class="close-modal" id="closeProofModal">&times;</button>
+        <h2>📷 Ảnh biên lai</h2>
+        <img id="proofImageDisplay" class="proof-img-modal" alt="Ảnh biên lai">
+        <div class="switch-form" style="margin-top:15px;"><span id="closeProofFromInside">Đóng</span></div>
+    </div>
+</div>
+
 <div class="overlay" id="overlay"></div>
 
 <div class="menu-sidebar" id="menuSidebar">
@@ -148,12 +538,8 @@
     <div class="cart-total" id="sidebarTotal">Tổng: 0 VND</div>
     <button class="deposit-btn" id="sidebarDepositBtn">💵 Nạp tiền</button>
     <button class="checkout-btn" id="sidebarCheckout">Thanh toán</button>
+    <button class="admin-btn" id="sidebarAdminBtn" style="display:none;">👑 Duyệt tiền</button>
     <button class="logout-btn-sidebar" id="logoutBtnSidebar" style="display:none;">Đăng xuất</button>
-    <div class="admin-section">
-        <p>👑 Admin: Nduc (Ducanh05092008)</p>
-        <p style="font-size:0.8em; color:#666;">* Nạp tiền -> gửi ảnh -> admin duyệt</p>
-        <p style="font-size:0.8em; color:#888; margin-top:5px;">🏦 MB Bank: 0325976017 - NGUYEN DUC ANH</p>
-    </div>
 </div>
 
 <div class="container">
@@ -263,6 +649,7 @@
         closeMenu();
     });
 
+    // ====== NẠP TIỀN ======
     const depositModal = document.getElementById('depositModal');
     document.getElementById('sidebarDepositBtn').addEventListener('click', function() {
         if (!currentUser) { alert('Vui lòng đăng nhập để nạp tiền.'); return; }
@@ -286,7 +673,13 @@
                 preview.style.display = 'block';
             };
             reader.readAsDataURL(file);
+        } else {
+            document.getElementById('uploadPreview').style.display = 'none';
         }
+    });
+
+    document.getElementById('fileLabel').addEventListener('click', function() {
+        document.getElementById('depositProof').click();
     });
 
     document.getElementById('submitDepositBtn').addEventListener('click', function() {
@@ -313,6 +706,145 @@
         reader.readAsDataURL(proofFile);
     });
 
+    // ====== ADMIN ======
+    const adminModal = document.getElementById('adminModal');
+    document.getElementById('sidebarAdminBtn').addEventListener('click', function() {
+        if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
+        renderAdminDepositList();
+        adminModal.classList.add('active');
+    });
+    document.getElementById('closeAdminModal').addEventListener('click', function() { adminModal.classList.remove('active'); });
+    document.getElementById('closeAdminFromInside').addEventListener('click', function() { adminModal.classList.remove('active'); });
+    adminModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+
+    function renderAdminDepositList() {
+        const container = document.getElementById('adminDepositList');
+        container.innerHTML = '';
+        if (depositRequests.length === 0) {
+            container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có lịch sử nạp tiền</p>';
+            return;
+        }
+        // Hiển thị tất cả, xếp mới nhất lên đầu
+        const sorted = [...depositRequests].reverse();
+        sorted.forEach(req => {
+            const div = document.createElement('div');
+            div.className = 'deposit-item';
+            const statusText = req.status === 'pending' ? '⏳ Chờ duyệt' : '✅ Đã duyệt';
+            const statusClass = req.status === 'pending' ? 'status-pending' : 'status-approved';
+            div.innerHTML = `
+                <div class="info">
+                    <strong>${req.user}</strong><br>
+                    ${req.amount.toLocaleString()} VND<br>
+                    <span class="${statusClass}">${statusText}</span>
+                    <span class="time">${req.timestamp || ''}</span>
+                    ${req.proof ? `<span class="proof-link" onclick="viewProof('${req.id}')">📷 Xem ảnh</span>` : ''}
+                </div>
+                ${req.status === 'pending' ? `<button class="approve-btn" onclick="approveDeposit(${req.id}, '${req.user}', ${req.amount})">✅ Duyệt</button>` : ''}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function viewProof(id) {
+        const req = depositRequests.find(r => r.id === id);
+        if (!req || !req.proof) { alert('Không có ảnh biên lai.'); return; }
+        document.getElementById('proofImageDisplay').src = req.proof;
+        document.getElementById('proofModal').classList.add('active');
+    }
+    window.viewProof = viewProof;
+
+    document.getElementById('closeProofModal').addEventListener('click', function() { document.getElementById('proofModal').classList.remove('active'); });
+    document.getElementById('closeProofFromInside').addEventListener('click', function() { document.getElementById('proofModal').classList.remove('active'); });
+    document.getElementById('proofModal').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+
+    function approveDeposit(id, username, amount) {
+        if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền duyệt.'); return; }
+        const req = depositRequests.find(r => r.id === id);
+        if (!req || req.status !== 'pending') { alert('Yêu cầu đã được xử lý.'); return; }
+        req.status = 'approved';
+        if (balances[username]) {
+            balances[username] += amount;
+        } else {
+            balances[username] = amount;
+        }
+        if (currentUser === username) {
+            userBalance = balances[username];
+            updateBalanceDisplay();
+        }
+        saveBalances();
+        saveDepositRequests();
+        renderAdminDepositList();
+        alert(`✅ Đã duyệt ${amount.toLocaleString()} VND cho ${username}`);
+    }
+    window.approveDeposit = approveDeposit;
+
+    // Admin nạp tiền tùy chọn
+    document.getElementById('adminTopupBtn').addEventListener('click', function() {
+        if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
+        const username = document.getElementById('adminTopupUser').value.trim();
+        const amount = parseInt(document.getElementById('adminTopupAmount').value.trim());
+        if (!username) { alert('Nhập tên người dùng.'); return; }
+        if (!amount || amount <= 0) { alert('Nhập số tiền hợp lệ.'); return; }
+        if (!users[username] && username !== ADMIN_USER) { alert(`Tài khoản "${username}" không tồn tại.`); return; }
+        if (balances[username]) {
+            balances[username] += amount;
+        } else {
+            balances[username] = amount;
+        }
+        if (currentUser === username) {
+            userBalance = balances[username];
+            updateBalanceDisplay();
+        }
+        saveBalances();
+        document.getElementById('adminTopupUser').value = '';
+        document.getElementById('adminTopupAmount').value = '';
+        renderAdminDepositList();
+        alert(`✅ Đã nạp ${amount.toLocaleString()} VND cho ${username}`);
+    });
+
+    // Duyệt theo tên
+    document.getElementById('adminApproveBtn').addEventListener('click', function() {
+        if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền duyệt.'); return; }
+        const username = document.getElementById('adminApproveUser').value.trim();
+        if (!username) { alert('Nhập tên người dùng cần duyệt.'); return; }
+        const pending = depositRequests.filter(r => r.user === username && r.status === 'pending');
+        if (pending.length === 0) {
+            alert(`Không có yêu cầu nạp tiền đang chờ của "${username}"`);
+            return;
+        }
+        let total = 0;
+        pending.forEach(req => {
+            req.status = 'approved';
+            total += req.amount;
+            if (balances[username]) {
+                balances[username] += req.amount;
+            } else {
+                balances[username] = req.amount;
+            }
+            if (currentUser === username) {
+                userBalance = balances[username];
+                updateBalanceDisplay();
+            }
+        });
+        saveBalances();
+        saveDepositRequests();
+        renderAdminDepositList();
+        document.getElementById('adminApproveUser').value = '';
+        alert(`✅ Đã duyệt ${pending.length} yêu cầu, tổng ${total.toLocaleString()} VND cho ${username}`);
+    });
+
+    // Xoá lịch sử
+    document.getElementById('adminDeleteHistoryBtn').addEventListener('click', function() {
+        if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
+        if (depositRequests.length === 0) { alert('Không có lịch sử để xoá.'); return; }
+        if (confirm('Bạn có chắc muốn xoá toàn bộ lịch sử nạp tiền?')) {
+            depositRequests = [];
+            saveDepositRequests();
+            renderAdminDepositList();
+            alert('✅ Đã xoá toàn bộ lịch sử nạp tiền.');
+        }
+    });
+
     function autoApproveDeposits() {
         if (currentUser === ADMIN_USER) {
             const pending = depositRequests.filter(r => r.status === 'pending');
@@ -325,7 +857,6 @@
                 });
                 saveBalances();
                 saveDepositRequests();
-                alert(`Admin đã tự động duyệt ${pending.length} yêu cầu nạp tiền.`);
                 updateBalanceDisplay();
             }
         }
@@ -335,6 +866,7 @@
         document.getElementById('userBalanceDisplay').innerText = userBalance.toLocaleString();
     }
 
+    // ====== MENU ======
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('menuSidebar');
     const overlay = document.getElementById('overlay');
@@ -347,6 +879,7 @@
     });
     overlay.addEventListener('click', closeMenu);
 
+    // ====== ĐĂNG KÝ / ĐĂNG NHẬP ======
     const registerModal = document.getElementById('registerModal');
     const loginModal = document.getElementById('loginModal');
     document.getElementById('openRegisterBtn').addEventListener('click', function() {
@@ -432,14 +965,21 @@
         const statusEl = document.getElementById('sidebarUserStatus');
         const logoutBtn = document.getElementById('logoutBtnSidebar');
         const authBtns = document.querySelector('.auth-buttons');
+        const adminBtn = document.getElementById('sidebarAdminBtn');
         if (currentUser) {
             statusEl.textContent = '👤 ' + currentUser + ' (đã đăng nhập)';
             logoutBtn.style.display = 'block';
             authBtns.style.display = 'none';
+            if (currentUser === ADMIN_USER) {
+                adminBtn.style.display = 'block';
+            } else {
+                adminBtn.style.display = 'none';
+            }
         } else {
             statusEl.textContent = '🔴 Chưa đăng nhập';
             logoutBtn.style.display = 'none';
             authBtns.style.display = 'flex';
+            adminBtn.style.display = 'none';
         }
         updateBalanceDisplay();
     }
