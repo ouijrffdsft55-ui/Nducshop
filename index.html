@@ -212,7 +212,7 @@
             border: 1px solid #555;
         }
         .modal-content .deposit-list {
-            max-height: 280px;
+            max-height: 300px;
             overflow-y: auto;
             margin: 10px 0;
         }
@@ -536,7 +536,7 @@
         <button class="close-modal" id="closeAdminModal">&times;</button>
         <h2>👑 Quản lý nạp tiền</h2>
         <div id="adminDepositList" class="deposit-list">
-            <p style="color:#888; text-align:center; padding:20px 0;">Chưa có yêu cầu nạp tiền</p>
+            <p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có yêu cầu nạp tiền</p>
         </div>
         <div style="margin-top:15px; border-top:1px solid #555; padding-top:15px;">
             <p style="font-size:0.9em; color:#aaa; margin-bottom:8px;">⚡ Nạp tiền cho người dùng (Admin):</p>
@@ -575,7 +575,6 @@
     <div class="user-status" id="sidebarUserStatus">🔴 Chưa đăng nhập</div>
     <div class="balance-display">💰 Số dư: <strong id="userBalanceDisplay">0</strong> VND</div>
     <ul class="cart-list" id="sidebarCartList"><li style="color:#888; text-align:center; padding:20px 0;">Giỏ hàng trống</li></ul>
-    <!-- ĐÃ XÓA TỔNG -->
     <button class="deposit-btn" id="sidebarDepositBtn">💵 Nạp tiền</button>
     <button class="checkout-btn" id="sidebarCheckout">Thanh toán</button>
     <button class="admin-btn" id="sidebarAdminBtn" style="display:none;">👑 Duyệt tiền</button>
@@ -749,17 +748,22 @@
         if (!proofFile) { alert('Vui lòng tải lên ảnh biên lai.'); return; }
         const reader = new FileReader();
         reader.onload = function(ev) {
-            depositRequests.push({
+            const newRequest = {
                 id: Date.now(),
                 user: currentUser,
                 amount: amount,
                 proof: ev.target.result,
                 status: 'pending',
                 timestamp: new Date().toLocaleString()
-            });
+            };
+            depositRequests.push(newRequest);
             saveAllData();
             document.getElementById('depositStatus').innerHTML = '⏳ Đã gửi, chờ admin duyệt...';
             alert('Đã gửi yêu cầu nạp tiền. Chờ admin duyệt.');
+            // Cập nhật ngay lập tức cho admin nếu đang đăng nhập
+            if (currentUser === ADMIN_USER) {
+                renderAdminDepositList();
+            }
             setTimeout(() => { depositModal.classList.remove('active'); }, 1500);
         };
         reader.readAsDataURL(proofFile);
@@ -779,6 +783,9 @@
     function renderAdminDepositList() {
         const container = document.getElementById('adminDepositList');
         container.innerHTML = '';
+        // Luôn tải lại dữ liệu mới nhất từ localStorage
+        depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
+        
         if (depositRequests.length === 0) {
             container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có lịch sử nạp tiền</p>';
             return;
@@ -840,7 +847,7 @@
     }
     window.approveDeposit = approveDeposit;
 
-    // ====== ADMIN NẠP TIỀN CHO NGƯỜI DÙNG ======
+    // ====== ADMIN NẠP TIỀN CHO BẤT KỲ AI ======
     document.getElementById('adminTopupBtn').addEventListener('click', function() {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
         const username = document.getElementById('adminTopupUser').value.trim();
@@ -1009,7 +1016,6 @@
         if (users[user] && users[user] === pass) {
             currentUser = user;
             localStorage.setItem('shopSession', user);
-            // Lấy số dư từ balances
             userBalance = balances[user] || 0;
             updateUI();
             alert(`Đăng nhập thành công! Số dư: ${userBalance.toLocaleString()} VND`);
