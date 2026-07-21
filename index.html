@@ -575,7 +575,7 @@
     <div class="user-status" id="sidebarUserStatus">🔴 Chưa đăng nhập</div>
     <div class="balance-display">💰 Số dư: <strong id="userBalanceDisplay">0</strong> VND</div>
     <ul class="cart-list" id="sidebarCartList"><li style="color:#888; text-align:center; padding:20px 0;">Giỏ hàng trống</li></ul>
-    <div class="cart-total" id="sidebarTotal">Tổng: 0 VND</div>
+    <!-- ĐÃ XÓA TỔNG -->
     <button class="deposit-btn" id="sidebarDepositBtn">💵 Nạp tiền</button>
     <button class="checkout-btn" id="sidebarCheckout">Thanh toán</button>
     <button class="admin-btn" id="sidebarAdminBtn" style="display:none;">👑 Duyệt tiền</button>
@@ -605,12 +605,10 @@
     }
 
     // ====== DỮ LIỆU - KHỞI TẠO TỪ LOCALSTORAGE ======
-    // Lấy dữ liệu từ localStorage, nếu không có thì tạo mới
     let users = JSON.parse(localStorage.getItem('shopUsers')) || {};
     let balances = JSON.parse(localStorage.getItem('userBalances')) || {};
     let depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
 
-    // Admin luôn tồn tại (không lưu vào users để tránh đăng ký trùng)
     const ADMIN_USER = 'Nduc';
     const ADMIN_PASS = 'Ducanh05092008';
 
@@ -621,11 +619,6 @@
         localStorage.setItem('depositRequests', JSON.stringify(depositRequests));
         showSaveNotice();
     }
-
-    // Ghi đè các hàm lưu riêng lẻ để dùng chung
-    function saveUsers() { saveAllData(); }
-    function saveBalances() { saveAllData(); }
-    function saveDepositRequests() { saveAllData(); }
 
     // ====== BIẾN TOÀN CỤC ======
     let products = [];
@@ -693,8 +686,7 @@
                 list.appendChild(li);
             });
         }
-        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        document.getElementById('sidebarTotal').innerText = `Tổng: ${total.toLocaleString()} VND`;
+        // Không hiển thị tổng nữa
     }
 
     // ====== THANH TOÁN ======
@@ -848,27 +840,39 @@
     }
     window.approveDeposit = approveDeposit;
 
+    // ====== ADMIN NẠP TIỀN CHO NGƯỜI DÙNG ======
     document.getElementById('adminTopupBtn').addEventListener('click', function() {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
         const username = document.getElementById('adminTopupUser').value.trim();
         const amount = parseInt(document.getElementById('adminTopupAmount').value.trim());
         if (!username) { alert('Nhập tên người dùng.'); return; }
         if (!amount || amount <= 0) { alert('Nhập số tiền hợp lệ.'); return; }
-        if (!users[username] && username !== ADMIN_USER) { alert(`Tài khoản "${username}" không tồn tại.`); return; }
+        
+        // Kiểm tra tài khoản tồn tại (user thường hoặc admin)
+        const isUserExist = users[username] || username === ADMIN_USER;
+        if (!isUserExist) { 
+            alert(`Tài khoản "${username}" không tồn tại.`); 
+            return; 
+        }
+        
+        // Cộng tiền
         if (balances[username]) {
             balances[username] += amount;
         } else {
             balances[username] = amount;
         }
+        
+        // Nếu đang đăng nhập đúng user đó thì cập nhật userBalance
         if (currentUser === username) {
             userBalance = balances[username];
             updateBalanceDisplay();
         }
+        
         saveAllData();
         document.getElementById('adminTopupUser').value = '';
         document.getElementById('adminTopupAmount').value = '';
         renderAdminDepositList();
-        alert(`✅ Đã nạp ${amount.toLocaleString()} VND cho ${username}`);
+        alert(`✅ Đã nạp ${amount.toLocaleString()} VND cho ${username}\nSố dư hiện tại: ${balances[username].toLocaleString()} VND`);
     });
 
     document.getElementById('adminApproveBtn').addEventListener('click', function() {
@@ -989,7 +993,6 @@
         const pass = document.getElementById('loginPass').value.trim();
         if (!user || !pass) { alert('Nhập tên và mật khẩu.'); return; }
         
-        // Kiểm tra admin
         if (user === ADMIN_USER && pass === ADMIN_PASS) {
             currentUser = ADMIN_USER;
             localStorage.setItem('shopSession', user);
@@ -1003,11 +1006,10 @@
             return;
         }
         
-        // Kiểm tra user thường
         if (users[user] && users[user] === pass) {
             currentUser = user;
             localStorage.setItem('shopSession', user);
-            // Lấy số dư từ balances (đã được load từ localStorage)
+            // Lấy số dư từ balances
             userBalance = balances[user] || 0;
             updateUI();
             alert(`Đăng nhập thành công! Số dư: ${userBalance.toLocaleString()} VND`);
