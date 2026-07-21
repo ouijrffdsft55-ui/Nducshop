@@ -71,7 +71,7 @@
             color: white;
             padding: 30px 35px;
             border-radius: 12px;
-            width: 460px;
+            width: 480px;
             max-width: 95%;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             position: relative;
@@ -353,14 +353,6 @@
             cursor: pointer;
             font-size: 0.8em;
         }
-        .menu-sidebar .cart-total {
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: right;
-            padding: 12px 0;
-            border-top: 2px solid #1abc9c;
-            margin-top: 10px;
-        }
         .menu-sidebar .checkout-btn, .menu-sidebar .deposit-btn, .menu-sidebar .admin-btn {
             width: 100%;
             padding: 12px;
@@ -456,6 +448,21 @@
             from { transform: translateX(100px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+        /* Lịch sử nạp tiền của user */
+        .history-item {
+            background: #1a252f;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            border-left: 3px solid #2ecc71;
+        }
+        .history-item .h-amount { color: #2ecc71; font-weight: bold; }
+        .history-item .h-status-pending { color: #f1c40f; }
+        .history-item .h-status-approved { color: #2ecc71; }
+        .history-item .h-time { color: #888; font-size: 0.75em; }
     </style>
 </head>
 <body>
@@ -555,6 +562,18 @@
             </div>
         </div>
         <div class="switch-form" style="margin-top:15px;"><span id="closeAdminFromInside">Đóng</span></div>
+    </div>
+</div>
+
+<!-- MODAL LỊCH SỬ NẠP TIỀN CỦA USER -->
+<div class="modal" id="historyModal">
+    <div class="modal-content">
+        <button class="close-modal" id="closeHistoryModal">&times;</button>
+        <h2>📜 Lịch sử nạp tiền</h2>
+        <div id="userHistoryList" style="max-height:350px; overflow-y:auto; margin:10px 0;">
+            <p style="color:#888; text-align:center; padding:20px 0;">Chưa có lịch sử nạp tiền</p>
+        </div>
+        <div class="switch-form" style="margin-top:15px;"><span id="closeHistoryFromInside">Đóng</span></div>
     </div>
 </div>
 
@@ -685,7 +704,6 @@
                 list.appendChild(li);
             });
         }
-        // Không hiển thị tổng nữa
     }
 
     // ====== THANH TOÁN ======
@@ -760,7 +778,6 @@
             saveAllData();
             document.getElementById('depositStatus').innerHTML = '⏳ Đã gửi, chờ admin duyệt...';
             alert('Đã gửi yêu cầu nạp tiền. Chờ admin duyệt.');
-            // Cập nhật ngay lập tức cho admin nếu đang đăng nhập
             if (currentUser === ADMIN_USER) {
                 renderAdminDepositList();
             }
@@ -769,10 +786,46 @@
         reader.readAsDataURL(proofFile);
     });
 
+    // ====== LỊCH SỬ NẠP TIỀN CỦA USER ======
+    const historyModal = document.getElementById('historyModal');
+    document.getElementById('sidebarHistoryBtn').addEventListener('click', function() {
+        if (!currentUser) { alert('Vui lòng đăng nhập.'); return; }
+        renderUserHistory(currentUser);
+        historyModal.classList.add('active');
+    });
+    document.getElementById('closeHistoryModal').addEventListener('click', function() { historyModal.classList.remove('active'); });
+    document.getElementById('closeHistoryFromInside').addEventListener('click', function() { historyModal.classList.remove('active'); });
+    historyModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+
+    function renderUserHistory(username) {
+        const container = document.getElementById('userHistoryList');
+        container.innerHTML = '';
+        const userHistory = depositRequests.filter(r => r.user === username);
+        if (userHistory.length === 0) {
+            container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có lịch sử nạp tiền</p>';
+            return;
+        }
+        const sorted = [...userHistory].reverse();
+        sorted.forEach(req => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            const statusText = req.status === 'pending' ? '⏳ Chờ duyệt' : '✅ Đã duyệt';
+            const statusClass = req.status === 'pending' ? 'h-status-pending' : 'h-status-approved';
+            div.innerHTML = `
+                <span><span class="h-amount">+${req.amount.toLocaleString()} VND</span></span>
+                <span><span class="${statusClass}">${statusText}</span></span>
+                <span class="h-time">${req.timestamp || ''}</span>
+            `;
+            container.appendChild(div);
+        });
+    }
+
     // ====== ADMIN ======
     const adminModal = document.getElementById('adminModal');
     document.getElementById('sidebarAdminBtn').addEventListener('click', function() {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
+        // Luôn tải lại dữ liệu mới nhất từ localStorage
+        depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
         renderAdminDepositList();
         adminModal.classList.add('active');
     });
@@ -783,11 +836,11 @@
     function renderAdminDepositList() {
         const container = document.getElementById('adminDepositList');
         container.innerHTML = '';
-        // Luôn tải lại dữ liệu mới nhất từ localStorage
+        // Luôn tải lại dữ liệu mới nhất
         depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
         
         if (depositRequests.length === 0) {
-            container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có lịch sử nạp tiền</p>';
+            container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có yêu cầu nạp tiền</p>';
             return;
         }
         const sorted = [...depositRequests].reverse();
@@ -855,21 +908,18 @@
         if (!username) { alert('Nhập tên người dùng.'); return; }
         if (!amount || amount <= 0) { alert('Nhập số tiền hợp lệ.'); return; }
         
-        // Kiểm tra tài khoản tồn tại (user thường hoặc admin)
         const isUserExist = users[username] || username === ADMIN_USER;
         if (!isUserExist) { 
             alert(`Tài khoản "${username}" không tồn tại.`); 
             return; 
         }
         
-        // Cộng tiền
         if (balances[username]) {
             balances[username] += amount;
         } else {
             balances[username] = amount;
         }
         
-        // Nếu đang đăng nhập đúng user đó thì cập nhật userBalance
         if (currentUser === username) {
             userBalance = balances[username];
             updateBalanceDisplay();
