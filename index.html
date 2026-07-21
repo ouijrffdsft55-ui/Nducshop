@@ -243,9 +243,19 @@
         notice._timeout = setTimeout(() => { notice.classList.remove('show'); }, 1500);
     }
 
-    let users = JSON.parse(localStorage.getItem('shopUsers')) || {};
-    let balances = JSON.parse(localStorage.getItem('userBalances')) || {};
-    let depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
+    // ====== LUÔN LƯU VÀ TẢI DỮ LIỆU TỪ LOCALSTORAGE ======
+    function loadAllData() {
+        return {
+            users: JSON.parse(localStorage.getItem('shopUsers')) || {},
+            balances: JSON.parse(localStorage.getItem('userBalances')) || {},
+            depositRequests: JSON.parse(localStorage.getItem('depositRequests')) || []
+        };
+    }
+
+    let data = loadAllData();
+    let users = data.users;
+    let balances = data.balances;
+    let depositRequests = data.depositRequests;
     const ADMIN_USER = 'Nduc';
     const ADMIN_PASS = 'Ducanh05092008';
 
@@ -449,7 +459,10 @@
     const adminModal = document.getElementById('adminModal');
     document.getElementById('sidebarAdminBtn').addEventListener('click', function() {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
-        depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
+        // Tải lại dữ liệu mới nhất
+        let freshData = loadAllData();
+        depositRequests = freshData.depositRequests;
+        balances = freshData.balances;
         renderAdminDepositList();
         adminModal.classList.add('active');
     });
@@ -460,7 +473,8 @@
     function renderAdminDepositList() {
         const container = document.getElementById('adminDepositList');
         container.innerHTML = '';
-        depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
+        let freshData = loadAllData();
+        depositRequests = freshData.depositRequests;
         if (depositRequests.length === 0) {
             container.innerHTML = '<p style="color:#888; text-align:center; padding:20px 0;">📭 Chưa có yêu cầu nạp tiền</p>';
             return;
@@ -501,6 +515,9 @@
 
     function approveDeposit(id, username, amount) {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền duyệt.'); return; }
+        let freshData = loadAllData();
+        depositRequests = freshData.depositRequests;
+        balances = freshData.balances;
         const req = depositRequests.find(r => r.id === id);
         if (!req || req.status !== 'pending') { alert('Yêu cầu đã được xử lý.'); return; }
         req.status = 'approved';
@@ -518,6 +535,9 @@
         const amount = parseInt(document.getElementById('adminTopupAmount').value.trim());
         if (!username) { alert('Nhập tên người dùng.'); return; }
         if (!amount || amount <= 0) { alert('Nhập số tiền hợp lệ.'); return; }
+        let freshData = loadAllData();
+        users = freshData.users;
+        balances = freshData.balances;
         if (!users[username] && username !== ADMIN_USER) { alert(`Tài khoản "${username}" không tồn tại.`); return; }
         if (balances[username]) { balances[username] += amount; } else { balances[username] = amount; }
         if (currentUser === username) { userBalance = balances[username]; updateBalanceDisplay(); }
@@ -532,6 +552,9 @@
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền duyệt.'); return; }
         const username = document.getElementById('adminApproveUser').value.trim();
         if (!username) { alert('Nhập tên người dùng cần duyệt.'); return; }
+        let freshData = loadAllData();
+        depositRequests = freshData.depositRequests;
+        balances = freshData.balances;
         const pending = depositRequests.filter(r => r.user === username && r.status === 'pending');
         if (pending.length === 0) { alert(`Không có yêu cầu nạp tiền đang chờ của "${username}"`); return; }
         let total = 0;
@@ -549,6 +572,8 @@
 
     document.getElementById('adminDeleteHistoryBtn').addEventListener('click', function() {
         if (currentUser !== ADMIN_USER) { alert('Chỉ admin mới có quyền này.'); return; }
+        let freshData = loadAllData();
+        depositRequests = freshData.depositRequests;
         if (depositRequests.length === 0) { alert('Không có lịch sử để xoá.'); return; }
         if (confirm('Bạn có chắc muốn xoá toàn bộ lịch sử nạp tiền?')) {
             depositRequests = [];
@@ -560,6 +585,9 @@
 
     function autoApproveDeposits() {
         if (currentUser === ADMIN_USER) {
+            let freshData = loadAllData();
+            depositRequests = freshData.depositRequests;
+            balances = freshData.balances;
             const pending = depositRequests.filter(r => r.status === 'pending');
             if (pending.length > 0) {
                 pending.forEach(req => {
@@ -650,6 +678,9 @@
         if (users[user] && users[user] === pass) {
             currentUser = user;
             localStorage.setItem('shopSession', user);
+            // Lấy số dư mới nhất từ localStorage
+            let freshData = loadAllData();
+            balances = freshData.balances;
             userBalance = balances[user] || 0;
             updateUI();
             alert(`Đăng nhập thành công! Số dư: ${userBalance.toLocaleString()} VND`);
@@ -688,15 +719,34 @@
             authBtns.style.display = 'flex';
             adminBtn.style.display = 'none';
         }
+        // Luôn cập nhật số dư từ localStorage
+        let freshData = loadAllData();
+        balances = freshData.balances;
+        if (currentUser) {
+            userBalance = balances[currentUser] || 0;
+        }
         updateBalanceDisplay();
     }
 
     function checkSession() {
         const saved = localStorage.getItem('shopSession');
         if (saved) {
-            if (saved === ADMIN_USER) { currentUser = ADMIN_USER; userBalance = 0; }
-            else if (users[saved]) { currentUser = saved; userBalance = balances[saved] || 0; }
-            else { localStorage.removeItem('shopSession'); currentUser = null; userBalance = 0; }
+            let freshData = loadAllData();
+            users = freshData.users;
+            balances = freshData.balances;
+            if (saved === ADMIN_USER) { 
+                currentUser = ADMIN_USER; 
+                userBalance = 0; 
+            }
+            else if (users[saved]) { 
+                currentUser = saved; 
+                userBalance = balances[saved] || 0; 
+            }
+            else { 
+                localStorage.removeItem('shopSession'); 
+                currentUser = null; 
+                userBalance = 0; 
+            }
         }
         updateUI();
         if (currentUser === ADMIN_USER) autoApproveDeposits();
