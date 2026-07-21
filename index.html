@@ -3,242 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NducShop - Đăng nhập / Đăng ký</title>
+    <title>Cửa hàng trực tuyến</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-        body { background: #0a0a0f; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .container { max-width: 420px; width: 100%; background: #12121a; padding: 2rem 1.5rem 1.5rem; border-radius: 20px; border: 1px solid #2a2a3a; }
-        .brand { text-align: center; margin-bottom: 2rem; }
-        .brand h1 { font-size: 2rem; font-weight: 700; color: #fff; }
-        .brand .sub { color: #8888cc; font-size: 0.8rem; letter-spacing: 2px; }
-        .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a3a; }
-        .tabs button { flex: 1; padding: 0.7rem; background: #1a1a2a; border: none; color: #8888bb; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .tabs button.active { background: #2a2a5a; color: #fff; }
-        .form { display: none; flex-direction: column; gap: 1rem; }
-        .form.active { display: flex; }
-        .form input { background: #1a1a2a; border: 1px solid #2e2e4a; border-radius: 10px; padding: 0.8rem 1rem; color: #fff; font-size: 0.95rem; outline: none; }
-        .form input:focus { border-color: #5555aa; }
-        .form input::placeholder { color: #555577; }
-        .form button { background: #2a6a3a; border: none; border-radius: 10px; padding: 0.8rem; font-size: 1rem; font-weight: 600; color: #fff; cursor: pointer; transition: 0.2s; }
-        .form button:hover { background: #3a8a4a; }
-        .form button.danger { background: #6a2a2a; }
-        .form button.danger:hover { background: #8a3a3a; }
-        .message { text-align: center; font-size: 0.85rem; color: #ff6b6b; min-height: 1.5rem; margin-top: 0.5rem; }
-        .message.success { color: #6bff6b; }
-        .shop-area { display: none; text-align: center; padding: 1rem 0; }
-        .shop-area.active { display: block; }
-        .shop-area h2 { color: #fff; margin-bottom: 0.5rem; }
-        .shop-area p { color: #8888bb; font-size: 0.9rem; }
-        .shop-area .logout { background: #6a2a2a; border: none; border-radius: 10px; padding: 0.6rem 2rem; color: #fff; font-weight: 600; cursor: pointer; margin-top: 1rem; }
-        .shop-area .logout:hover { background: #8a3a3a; }
-        .hidden { display: none; }
-
-        /* ---- Phần footer giống IMG_0340 ---- */
-        .footer-links { margin-top: 1.8rem; padding-top: 1rem; border-top: 1px solid #1e1e2e; text-align: center; }
-        .footer-links .row { display: flex; justify-content: center; gap: 1.2rem; font-size: 0.7rem; color: #666688; flex-wrap: wrap; }
-        .footer-links .row span { cursor: default; }
-        .footer-links .row .highlight { color: #8888cc; }
-        .footer-links .zalo-line { display: flex; justify-content: center; align-items: center; gap: 0.8rem; margin-top: 0.6rem; padding: 0.4rem 0; background: #161625; border-radius: 30px; border: 1px solid #2a2a4a; }
-        .footer-links .zalo-line span { color: #aaaadd; font-size: 0.8rem; }
-        .footer-links .zalo-line .zalo-badge { background: #0066ff; color: #fff; padding: 0.05rem 1rem; border-radius: 30px; font-weight: 600; font-size: 0.75rem; }
-        .footer-links .domain-line { margin-top: 0.5rem; font-size: 0.7rem; color: #444466; letter-spacing: 1px; }
-        .footer-links .domain-line .aa { color: #7777aa; font-weight: 600; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f4f4f4; padding: 20px; padding-top: 80px; }
+        .container { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+        .menu-toggle { position: fixed; top: 20px; left: 20px; z-index: 1000; background: #2c3e50; border: none; padding: 12px 14px; border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .menu-toggle span { display: block; width: 28px; height: 4px; background: white; border-radius: 2px; }
+        .auth-buttons { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; }
+        .auth-buttons button { padding: 10px 20px; border: none; border-radius: 6px; background: #1abc9c; color: white; font-weight: bold; cursor: pointer; font-size: 0.95em; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .auth-buttons button:hover { background: #16a085; }
+        .auth-buttons .login-btn { background: #3498db; }
+        .auth-buttons .login-btn:hover { background: #2980b9; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: #2c3e50; color: white; padding: 30px 35px; border-radius: 12px; width: 420px; max-width: 95%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-content h2 { margin-bottom: 20px; border-bottom: 2px solid #1abc9c; padding-bottom: 10px; text-align: center; }
+        .modal-content .close-modal { position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer; color: #aaa; background: none; border: none; }
+        .modal-content .close-modal:hover { color: #fff; }
+        .input-group { position: relative; margin: 12px 0; }
+        .input-group input { width: 100%; padding: 12px 45px 12px 14px; border: none; border-radius: 6px; font-size: 1em; background: #ecf0f1; color: #2c3e50; outline: none; }
+        .input-group input:focus { background: #fff; box-shadow: 0 0 0 2px #1abc9c; }
+        .input-group .toggle-pwd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 1.4em; color: #555; padding: 0 4px; line-height: 1; }
+        .input-group .toggle-pwd:hover { color: #000; }
+        .modal-content button[type="submit"], .modal-content .action-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 6px; background: #1abc9c; color: white; font-weight: bold; font-size: 1em; cursor: pointer; }
+        .modal-content button[type="submit"]:hover, .modal-content .action-btn:hover { background: #16a085; }
+        .modal-content .switch-form { text-align: center; margin-top: 15px; font-size: 0.9em; color: #bbb; }
+        .modal-content .switch-form span { color: #1abc9c; cursor: pointer; text-decoration: underline; }
+        .modal-content .switch-form span:hover { color: #16a085; }
+        .modal-content .qr-image { width: 100%; max-width: 280px; display: block; margin: 10px auto; border-radius: 8px; border: 2px solid #1abc9c; background: #fff; padding: 5px; }
+        .modal-content .deposit-info { background: #34495e; padding: 12px; border-radius: 6px; margin: 10px 0; text-align: center; font-size: 0.95em; }
+        .modal-content .deposit-info strong { color: #f1c40f; }
+        .modal-content .file-input-label { display: block; background: #3498db; padding: 12px; border-radius: 6px; text-align: center; cursor: pointer; margin: 10px 0; font-weight: bold; color: white; transition: 0.2s; }
+        .modal-content .file-input-label:hover { background: #2980b9; }
+        .modal-content input[type="file"] { display: none; }
+        .modal-content .upload-preview { max-width: 100%; max-height: 150px; margin: 10px auto; display: none; border-radius: 6px; border: 1px solid #555; }
+        .menu-sidebar { position: fixed; top: 0; left: -350px; width: 330px; height: 100%; background: #2c3e50; color: white; padding: 80px 20px 20px; transition: 0.3s; z-index: 999; box-shadow: 2px 0 15px rgba(0,0,0,0.5); overflow-y: auto; }
+        .menu-sidebar.open { left: 0; }
+        .menu-sidebar h2 { border-bottom: 2px solid #1abc9c; padding-bottom: 10px; margin-bottom: 15px; font-size: 1.2em; }
+        .menu-sidebar .user-status { background: #34495e; padding: 12px; border-radius: 6px; text-align: center; margin-bottom: 15px; font-size: 0.95em; }
+        .menu-sidebar .balance-display { background: #1a252f; padding: 10px; border-radius: 6px; text-align: center; margin: 10px 0; font-size: 1.1em; }
+        .menu-sidebar .balance-display strong { color: #f1c40f; }
+        .menu-sidebar .cart-list { list-style: none; padding: 0; margin: 10px 0; max-height: 200px; overflow-y: auto; }
+        .menu-sidebar .cart-list li { padding: 8px 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; font-size: 0.9em; }
+        .menu-sidebar .cart-list li button { background: #e74c3c; border: none; color: #fff; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
+        .menu-sidebar .cart-total { font-size: 1.2em; font-weight: bold; text-align: right; padding: 12px 0; border-top: 2px solid #1abc9c; margin-top: 10px; }
+        .menu-sidebar .checkout-btn, .menu-sidebar .deposit-btn { width: 100%; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 1em; cursor: pointer; margin-top: 8px; }
+        .menu-sidebar .checkout-btn { background: #3498db; }
+        .menu-sidebar .checkout-btn:hover { background: #2980b9; }
+        .menu-sidebar .deposit-btn { background: #f1c40f; color: #2c3e50; }
+        .menu-sidebar .deposit-btn:hover { background: #f39c12; }
+        .menu-sidebar .logout-btn-sidebar { width: 100%; padding: 10px; background: #e74c3c; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .menu-sidebar .logout-btn-sidebar:hover { background: #c0392b; }
+        .menu-sidebar .admin-section { margin-top: 20px; border-top: 1px solid #555; padding-top: 15px; color: #aaa; font-size: 0.85em; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
+        .overlay.active { display: block; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .product { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; background: #fafafa; }
+        .product img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
+        .product h3 { margin: 10px 0; }
+        .product p.price { color: #e67e22; font-weight: bold; font-size: 1.2em; }
+        button.add-to-cart { background: #2ecc71; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        button.add-to-cart:hover { background: #27ae60; }
+        .note { text-align: center; color: #888; margin-top: 30px; }
+        .spacer { height: 800px; }
+        h1 { text-align: center; margin-bottom: 20px; }
+        #fileLabel { cursor: pointer; }
+        #fileLabel:hover { background: #2980b9; }
     </style>
 </head>
 <body>
-<div class="container" id="app">
-    <!-- Brand -->
-    <div class="brand">
-        <h1>Nduc<span style="color:#8888cc;">Shop</span></h1>
-        <div class="sub">CUTTAY SOLUTIONS</div>
-    </div>
 
-    <!-- Khu vực đăng nhập / đăng ký -->
-    <div id="authArea">
-        <div class="tabs">
-            <button class="active" data-tab="login">Đăng nhập</button>
-            <button data-tab="register">Đăng ký</button>
-        </div>
+<button class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></button>
 
-        <!-- Form Đăng nhập -->
-        <div class="form active" id="loginForm">
-            <input type="text" id="loginUser" placeholder="Tên đăng nhập" autocomplete="username">
-            <input type="password" id="loginPass" placeholder="Mật khẩu" autocomplete="current-password">
-            <button id="loginBtn">Đăng nhập</button>
-            <div class="message" id="loginMsg"></div>
-        </div>
+<div class="auth-buttons">
+    <button id="openRegisterBtn">Đăng ký</button>
+    <button id="openLoginBtn" class="login-btn">Đăng nhập</button>
+</div>
 
-        <!-- Form Đăng ký -->
-        <div class="form" id="registerForm">
-            <input type="text" id="regUser" placeholder="Tên đăng nhập mới" autocomplete="off">
-            <input type="password" id="regPass" placeholder="Mật khẩu" autocomplete="new-password">
-            <input type="password" id="regPass2" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
-            <button id="registerBtn">Đăng ký</button>
-            <div class="message" id="regMsg"></div>
+<!-- MODAL ĐĂNG KÝ -->
+<div class="modal" id="registerModal">
+    <div class="modal-content">
+        <button class="close-modal" id="closeRegisterModal">&times;</button>
+        <h2>Đăng ký</h2>
+        <div class="input-group"><input type="text" id="regUser" placeholder="Tên đăng ký"></div>
+        <div class="input-group">
+            <input type="password" id="regPass" placeholder="Mật khẩu">
+            <button class="toggle-pwd" data-target="regPass">👁️</button>
         </div>
-    </div>
-
-    <!-- Khu vực Shop (sau login) -->
-    <div class="shop-area" id="shopArea">
-        <h2>🛒 Chào mừng đến Shop</h2>
-        <p>Bạn đã đăng nhập thành công.</p>
-        <p style="font-size:0.8rem; color:#555577; margin-top:0.3rem;">(Giao diện shop sẽ hiển thị tại đây)</p>
-        <button class="logout" id="logoutBtn">Đăng xuất</button>
-    </div>
-
-    <!-- ---- Footer giống IMG_0340: dòng Discord/Fanpage, Crypto, Zalo, AA shyun.shop ---- -->
-    <div class="footer-links">
-        <div class="row">
-            <span>Discord</span>
-            <span>Fanpage</span>
-            <span class="highlight">Crypto/Debit</span>
-        </div>
-        <div class="zalo-line">
-            <span>📱 Zalo</span>
-            <span class="zalo-badge">NducShop</span>
-        </div>
-        <div class="domain-line">
-            <span class="aa">AA</span>  NducShop
-        </div>
+        <button type="submit" id="registerBtn">Đăng ký</button>
+        <div class="switch-form">Đã có tài khoản? <span id="switchToLogin">Đăng nhập</span></div>
     </div>
 </div>
 
+<!-- MODAL ĐĂNG NHẬP -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <button class="close-modal" id="closeLoginModal">&times;</button>
+        <h2>Đăng nhập</h2>
+        <div class="input-group"><input type="text" id="loginUser" placeholder="Tên đăng nhập"></div>
+        <div class="input-group">
+            <input type="password" id="loginPass" placeholder="Mật khẩu">
+            <button class="toggle-pwd" data-target="loginPass">👁️</button>
+        </div>
+        <button type="submit" id="loginBtn">Đăng nhập</button>
+        <div class="switch-form">Chưa có tài khoản? <span id="switchToRegister">Đăng ký</span></div>
+    </div>
+</div>
+
+<!-- MODAL NẠP TIỀN - QR TỪ API (TẠM THỜI) -->
+<div class="modal" id="depositModal">
+    <div class="modal-content">
+        <button class="close-modal" id="closeDepositModal">&times;</button>
+        <h2>💵 Nạp tiền</h2>
+        <p style="text-align:center; margin-bottom:10px;">Quét QR bên dưới để chuyển tiền</p>
+        <!-- QR từ API - thay bằng ảnh thật khi có -->
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=0325976017" alt="QR Code" class="qr-image" id="qrImageDisplay">
+        <div class="deposit-info">
+            <strong>NGUYEN DUC ANH</strong><br>
+            Ngân hàng: <strong>MB Bank</strong><br>
+            Số tài khoản: <strong>0325976017</strong>
+        </div>
+        <div class="input-group">
+            <input type="number" id="depositAmount" placeholder="Nhập số tiền đã chuyển (VND)">
+        </div>
+        <label class="file-input-label" id="fileLabel">📎 Tải lên ảnh biên lai</label>
+        <input type="file" id="depositProof" accept="image/*">
+        <img id="uploadPreview" class="upload-preview" alt="Xem trước ảnh">
+        <button class="action-btn" id="submitDepositBtn">✅ Xác nhận đã chuyển tiền</button>
+        <div style="margin-top:12px; text-align:center; font-size:0.85em; color:#aaa;">
+            <span id="depositStatus">Chờ admin duyệt</span>
+        </div>
+        <div class="switch-form" style="margin-top:10px;"><span id="closeDepositFromInside">Đóng</span></div>
+    </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="menu-sidebar" id="menuSidebar">
+    <h2>🛒 Giỏ hàng</h2>
+    <div class="user-status" id="sidebarUserStatus">🔴 Chưa đăng nhập</div>
+    <div class="balance-display">💰 Số dư: <strong id="userBalanceDisplay">0</strong> VND</div>
+    <ul class="cart-list" id="sidebarCartList"><li style="color:#888; text-align:center; padding:20px 0;">Giỏ hàng trống</li></ul>
+    <div class="cart-total" id="sidebarTotal">Tổng: 0 VND</div>
+    <button class="deposit-btn" id="sidebarDepositBtn">💵 Nạp tiền</button>
+    <button class="checkout-btn" id="sidebarCheckout">Thanh toán</button>
+    <button class="logout-btn-sidebar" id="logoutBtnSidebar" style="display:none;">Đăng xuất</button>
+    <div class="admin-section">
+        <p>👑 Admin: Nduc (Ducanh05092008)</p>
+        <p style="font-size:0.8em; color:#666;">* Nạp tiền -> gửi ảnh -> admin duyệt</p>
+        <p style="font-size:0.8em; color:#888; margin-top:5px;">🏦 MB Bank: 0325976017 - NGUYEN DUC ANH</p>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Web Shop</h1>
+    <div class="product-grid" id="product-list"></div>
+    <div class="note">* Đăng nhập để mua hàng - Xem giỏ hàng & nạp tiền trong menu 3 gạch</div>
+    <div class="spacer"></div>
+</div>
+
 <script>
-    // ---- Lưu trữ tài khoản trên localStorage ----
-    const DB_KEY = 'nducshop_accounts';
-
-    function getAccounts() {
-        try {
-            return JSON.parse(localStorage.getItem(DB_KEY)) || {};
-        } catch { return {}; }
-    }
-
-    function saveAccounts(accounts) {
-        localStorage.setItem(DB_KEY, JSON.stringify(accounts));
-    }
-
-    // ---- State ----
+    let products = [];
+    let cart = [];
     let currentUser = null;
+    let userBalance = 0;
 
-    // ---- DOM refs ----
-    const authArea = document.getElementById('authArea');
-    const shopArea = document.getElementById('shopArea');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const loginMsg = document.getElementById('loginMsg');
-    const regMsg = document.getElementById('regMsg');
+    const ADMIN_USER = 'Nduc';
+    const ADMIN_PASS = 'Ducanh05092008';
+    const storedUsers = JSON.parse(localStorage.getItem('shopUsers')) || {};
+    const users = { ...storedUsers };
+    const balances = JSON.parse(localStorage.getItem('userBalances')) || {};
+    let depositRequests = JSON.parse(localStorage.getItem('depositRequests')) || [];
 
-    // ---- Tab switching ----
-    document.querySelectorAll('.tabs button').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const tab = this.dataset.tab;
-            if (tab === 'login') {
-                loginForm.classList.add('active');
-                registerForm.classList.remove('active');
-            } else {
-                registerForm.classList.add('active');
-                loginForm.classList.remove('active');
+    function saveUsers() {
+        const { [ADMIN_USER]: _, ...rest } = storedUsers;
+        localStorage.setItem('shopUsers', JSON.stringify(rest));
+    }
+    function saveBalances() { localStorage.setItem('userBalances', JSON.stringify(balances)); }
+    function saveDepositRequests() { localStorage.setItem('depositRequests', JSON.stringify(depositRequests)); }
+
+    function renderProducts() {
+        const container = document.getElementById('product-list');
+        container.innerHTML = '';
+        if (products.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:#999;padding:40px 0;">Hiện chưa có sản phẩm nào</p>';
+            return;
+        }
+        products.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'product';
+            div.innerHTML = `
+                <img src="${p.image}" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <p class="price">${p.price.toLocaleString()} VND</p>
+                <button class="add-to-cart" data-id="${p.id}">Thêm vào giỏ</button>
+            `;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.dataset.id);
+                const product = products.find(p => p.id === id);
+                if (product) {
+                    if (!currentUser) { alert('Vui lòng đăng nhập.'); return; }
+                    addToCart(product);
+                }
+            });
+        });
+    }
+
+    function addToCart(product) {
+        const existing = cart.find(item => item.id === product.id);
+        if (existing) existing.quantity += 1;
+        else cart.push({ ...product, quantity: 1 });
+        renderCart();
+    }
+    function removeFromCart(id) {
+        cart = cart.filter(item => item.id !== id);
+        renderCart();
+    }
+    function renderCart() {
+        const list = document.getElementById('sidebarCartList');
+        list.innerHTML = '';
+        if (cart.length === 0) {
+            list.innerHTML = '<li style="color:#888; text-align:center; padding:20px 0;">Giỏ hàng trống</li>';
+        } else {
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                const subtotal = item.price * item.quantity;
+                li.innerHTML = `
+                    <span>${item.name} x ${item.quantity}</span>
+                    <span>${subtotal.toLocaleString()} VND 
+                        <button onclick="removeFromCart(${item.id})">X</button>
+                    </span>
+                `;
+                list.appendChild(li);
+            });
+        }
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        document.getElementById('sidebarTotal').innerText = `Tổng: ${total.toLocaleString()} VND`;
+    }
+
+    document.getElementById('sidebarCheckout').addEventListener('click', function() {
+        if (!currentUser) { alert('Đăng nhập để thanh toán.'); return; }
+        if (cart.length === 0) { alert('Giỏ hàng trống!'); return; }
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        if (userBalance < total) {
+            alert(`Số dư không đủ! Cần ${total.toLocaleString()} VND, bạn có ${userBalance.toLocaleString()} VND.`);
+            return;
+        }
+        userBalance -= total;
+        balances[currentUser] = userBalance;
+        saveBalances();
+        alert(`Thanh toán thành công! Tổng: ${total.toLocaleString()} VND\nSố dư còn lại: ${userBalance.toLocaleString()} VND`);
+        cart = [];
+        renderCart();
+        updateBalanceDisplay();
+        closeMenu();
+    });
+
+    const depositModal = document.getElementById('depositModal');
+    document.getElementById('sidebarDepositBtn').addEventListener('click', function() {
+        if (!currentUser) { alert('Vui lòng đăng nhập để nạp tiền.'); return; }
+        depositModal.classList.add('active');
+        document.getElementById('depositAmount').value = '';
+        document.getElementById('depositProof').value = '';
+        document.getElementById('uploadPreview').style.display = 'none';
+        document.getElementById('depositStatus').innerHTML = 'Chờ admin duyệt';
+    });
+    document.getElementById('closeDepositModal').addEventListener('click', function() { depositModal.classList.remove('active'); });
+    document.getElementById('closeDepositFromInside').addEventListener('click', function() { depositModal.classList.remove('active'); });
+    depositModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+
+    document.getElementById('depositProof').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const preview = document.getElementById('uploadPreview');
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('submitDepositBtn').addEventListener('click', function() {
+        if (!currentUser) { alert('Vui lòng đăng nhập.'); return; }
+        const amount = parseInt(document.getElementById('depositAmount').value.trim());
+        const proofFile = document.getElementById('depositProof').files[0];
+        if (!amount || amount <= 0) { alert('Nhập số tiền hợp lệ.'); return; }
+        if (!proofFile) { alert('Vui lòng tải lên ảnh biên lai.'); return; }
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            depositRequests.push({
+                id: Date.now(),
+                user: currentUser,
+                amount: amount,
+                proof: ev.target.result,
+                status: 'pending',
+                timestamp: new Date().toLocaleString()
+            });
+            saveDepositRequests();
+            document.getElementById('depositStatus').innerHTML = '⏳ Đã gửi, chờ admin duyệt...';
+            alert('Đã gửi yêu cầu nạp tiền. Chờ admin duyệt.');
+            setTimeout(() => { depositModal.classList.remove('active'); }, 1500);
+        };
+        reader.readAsDataURL(proofFile);
+    });
+
+    function autoApproveDeposits() {
+        if (currentUser === ADMIN_USER) {
+            const pending = depositRequests.filter(r => r.status === 'pending');
+            if (pending.length > 0) {
+                pending.forEach(req => {
+                    req.status = 'approved';
+                    if (balances[req.user]) balances[req.user] += req.amount;
+                    else balances[req.user] = req.amount;
+                    if (currentUser === req.user) userBalance = balances[req.user];
+                });
+                saveBalances();
+                saveDepositRequests();
+                alert(`Admin đã tự động duyệt ${pending.length} yêu cầu nạp tiền.`);
+                updateBalanceDisplay();
             }
-            loginMsg.textContent = '';
-            loginMsg.className = 'message';
-            regMsg.textContent = '';
-            regMsg.className = 'message';
+        }
+    }
+
+    function updateBalanceDisplay() {
+        document.getElementById('userBalanceDisplay').innerText = userBalance.toLocaleString();
+    }
+
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('menuSidebar');
+    const overlay = document.getElementById('overlay');
+    function openMenu() { sidebar.classList.add('open'); overlay.classList.add('active'); }
+    function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (sidebar.classList.contains('open')) closeMenu();
+        else openMenu();
+    });
+    overlay.addEventListener('click', closeMenu);
+
+    const registerModal = document.getElementById('registerModal');
+    const loginModal = document.getElementById('loginModal');
+    document.getElementById('openRegisterBtn').addEventListener('click', function() {
+        registerModal.classList.add('active');
+        loginModal.classList.remove('active');
+    });
+    document.getElementById('openLoginBtn').addEventListener('click', function() {
+        loginModal.classList.add('active');
+        registerModal.classList.remove('active');
+    });
+    document.getElementById('closeRegisterModal').addEventListener('click', function() { registerModal.classList.remove('active'); });
+    document.getElementById('closeLoginModal').addEventListener('click', function() { loginModal.classList.remove('active'); });
+    registerModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+    loginModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+    document.getElementById('switchToLogin').addEventListener('click', function() {
+        registerModal.classList.remove('active');
+        loginModal.classList.add('active');
+    });
+    document.getElementById('switchToRegister').addEventListener('click', function() {
+        loginModal.classList.remove('active');
+        registerModal.classList.add('active');
+    });
+
+    document.getElementById('registerBtn').addEventListener('click', function() {
+        const user = document.getElementById('regUser').value.trim();
+        const pass = document.getElementById('regPass').value.trim();
+        if (!user || !pass) { alert('Nhập tên và mật khẩu.'); return; }
+        if (user === ADMIN_USER) { alert('Tên này là admin, không thể đăng ký.'); return; }
+        if (users[user]) { alert('Tên đã tồn tại.'); return; }
+        users[user] = pass;
+        saveUsers();
+        if (!balances[user]) balances[user] = 0;
+        saveBalances();
+        alert('Đăng ký thành công! Hãy đăng nhập.');
+        document.getElementById('regUser').value = '';
+        document.getElementById('regPass').value = '';
+        registerModal.classList.remove('active');
+        loginModal.classList.add('active');
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        const user = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        if (!user || !pass) { alert('Nhập tên và mật khẩu.'); return; }
+        if (user === ADMIN_USER && pass === ADMIN_PASS) {
+            currentUser = ADMIN_USER;
+            localStorage.setItem('shopSession', user);
+            userBalance = 0;
+            updateUI();
+            autoApproveDeposits();
+            alert('Đăng nhập admin thành công! Các yêu cầu nạp tiền đã được duyệt.');
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            loginModal.classList.remove('active');
+            return;
+        }
+        if (users[user] && users[user] === pass) {
+            currentUser = user;
+            localStorage.setItem('shopSession', user);
+            userBalance = balances[user] || 0;
+            updateUI();
+            alert('Đăng nhập thành công!');
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            loginModal.classList.remove('active');
+        } else {
+            alert('Sai tên hoặc mật khẩu.');
+        }
+    });
+
+    document.getElementById('logoutBtnSidebar').addEventListener('click', function() {
+        currentUser = null;
+        localStorage.removeItem('shopSession');
+        userBalance = 0;
+        updateUI();
+        cart = [];
+        renderCart();
+        alert('Đã đăng xuất.');
+        closeMenu();
+    });
+
+    function updateUI() {
+        const statusEl = document.getElementById('sidebarUserStatus');
+        const logoutBtn = document.getElementById('logoutBtnSidebar');
+        const authBtns = document.querySelector('.auth-buttons');
+        if (currentUser) {
+            statusEl.textContent = '👤 ' + currentUser + ' (đã đăng nhập)';
+            logoutBtn.style.display = 'block';
+            authBtns.style.display = 'none';
+        } else {
+            statusEl.textContent = '🔴 Chưa đăng nhập';
+            logoutBtn.style.display = 'none';
+            authBtns.style.display = 'flex';
+        }
+        updateBalanceDisplay();
+    }
+
+    function checkSession() {
+        const saved = localStorage.getItem('shopSession');
+        if (saved) {
+            if (saved === ADMIN_USER) { currentUser = ADMIN_USER; userBalance = 0; }
+            else if (users[saved]) { currentUser = saved; userBalance = balances[saved] || 0; }
+            else { localStorage.removeItem('shopSession'); currentUser = null; userBalance = 0; }
+        }
+        updateUI();
+        if (currentUser === ADMIN_USER) autoApproveDeposits();
+    }
+
+    document.querySelectorAll('.toggle-pwd').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            if (input.type === 'password') { input.type = 'text'; this.textContent = '🙈'; }
+            else { input.type = 'password'; this.textContent = '👁️'; }
         });
     });
 
-    // ---- Đăng ký ----
-    document.getElementById('registerBtn').addEventListener('click', function() {
-        const user = document.getElementById('regUser').value.trim();
-        const pass = document.getElementById('regPass').value;
-        const pass2 = document.getElementById('regPass2').value;
-
-        if (!user || !pass || !pass2) {
-            regMsg.textContent = '❌ Vui lòng điền đầy đủ thông tin.';
-            regMsg.className = 'message';
-            return;
-        }
-        if (user.length < 3) {
-            regMsg.textContent = '❌ Tên đăng nhập ít nhất 3 ký tự.';
-            regMsg.className = 'message';
-            return;
-        }
-        if (pass.length < 4) {
-            regMsg.textContent = '❌ Mật khẩu ít nhất 4 ký tự.';
-            regMsg.className = 'message';
-            return;
-        }
-        if (pass !== pass2) {
-            regMsg.textContent = '❌ Mật khẩu xác nhận không khớp.';
-            regMsg.className = 'message';
-            return;
-        }
-
-        const accounts = getAccounts();
-        if (accounts[user]) {
-            regMsg.textContent = '❌ Tên đăng nhập đã tồn tại.';
-            regMsg.className = 'message';
-            return;
-        }
-
-        accounts[user] = pass;
-        saveAccounts(accounts);
-        regMsg.textContent = '✅ Đăng ký thành công! Hãy đăng nhập.';
-        regMsg.className = 'message success';
-        document.getElementById('regUser').value = '';
-        document.getElementById('regPass').value = '';
-        document.getElementById('regPass2').value = '';
-        document.querySelector('[data-tab="login"]').click();
-    });
-
-    // ---- Đăng nhập ----
-    document.getElementById('loginBtn').addEventListener('click', function() {
-        const user = document.getElementById('loginUser').value.trim();
-        const pass = document.getElementById('loginPass').value;
-
-        if (!user || !pass) {
-            loginMsg.textContent = '❌ Nhập tên đăng nhập và mật khẩu.';
-            loginMsg.className = 'message';
-            return;
-        }
-
-        const accounts = getAccounts();
-        if (!accounts[user]) {
-            loginMsg.textContent = '❌ Tài khoản không tồn tại.';
-            loginMsg.className = 'message';
-            return;
-        }
-        if (accounts[user] !== pass) {
-            loginMsg.textContent = '❌ Sai mật khẩu.';
-            loginMsg.className = 'message';
-            return;
-        }
-
-        currentUser = user;
-        authArea.style.display = 'none';
-        shopArea.classList.add('active');
-        loginMsg.textContent = '';
-        loginMsg.className = 'message';
-        document.getElementById('loginUser').value = '';
-        document.getElementById('loginPass').value = '';
-    });
-
-    // ---- Đăng xuất ----
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        currentUser = null;
-        authArea.style.display = 'block';
-        shopArea.classList.remove('active');
-        document.querySelector('[data-tab="login"]').click();
-    });
-
-    // ---- Enter key ----
-    document.getElementById('loginPass').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') document.getElementById('loginBtn').click();
-    });
-    document.getElementById('regPass2').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') document.getElementById('registerBtn').click();
-    });
+    checkSession();
+    renderProducts();
+    renderCart();
+    updateUI();
+    window.removeFromCart = removeFromCart;
 </script>
 </body>
 </html>
